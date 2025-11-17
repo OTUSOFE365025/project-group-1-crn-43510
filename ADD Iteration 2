@@ -25,6 +25,53 @@ Asynchronous event processing was selected to ensure that external API calls do 
 | Decouple External API Interactions from Core System Logic | Prevents failures or changes in external university APIs from disrupting core AIDAP services, improving overall system stability and maintainability.      |
 | Enforce Secure Communication Mechanisms           | Protects sensitive academic and user data through authentication tokens, API keys, and encrypted channels, aligning with institutional privacy requirements. |
 
+## 2.5	 Architectural Element, Responsibility and Interface
+Below are the elements created to refine the integration layer of the system.
+
+Element                                             | Responsibility
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Integration Manager                                 | Control the workflow of integration modules, Handles error during communication, Manage synchronization tasks, normalize data and publish event to event bus
+LMS Connector                                       | Fetch course information, material, announcement and grade from LMS 
+Calendar Connector                                  | Fetch user’s calendar event and notification from Calendar
+Registration Connector                              | Fetch user’s enrollment data(year of study, courses, course instructor, schedule) frpm Registration system
+Mail Connector                                      | Fetch user’s school mail
+Security Module                                     | Ensure secure communication between the integration module and external systems, Token-based authentication, API key management, encryption
+Message Broker                                      | Collect and distribute event from event bus to application layer, Route event to proper application layer modules
+Event Bus                                           | Gather all published event from Connectors, Passes event to messenger broker for distribution
+
+
+External Interfaces
+
+Element                                             | Interface
+----------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+LMS Connector                                       | GET courses(student ID), GET announcement (Course ID), GET resources (course ID) , GET grades (student ID), API key
+Registration Connector                              | GET enrollment(student ID) 
+Calendar Connector                                  | GET event(user ID,date)
+Mail Connector                                      | GET mail(user ID)
+
+
+Internal Interface
+
+Element                                             | Interface
+-----------------------------------------------------------------------------------------------------------
+Event Bus                                           | Publish(event), Subscribe(Application Layer Module)
+Message Broker                                      | Distribute(Application Layer Module)
+Integration Manager                                 | TriggerSync, Normalize(data)
+
+
+2.6	 Model and View
+Figure 2.1 shows the refined module view of the AIDAP in terms of the interaction between the application layer. Instead of having the integration accessing the external system directly, data from the external system is handled by connectors, passed to the integration manager, normalized and published as an event in the event bus. These events are then distributed by the message broker.
+
+Figure 2.2 shows the refined deployment diagram of the AIDAP system where integration functionality is more detailed with the addition of a security module and message broker that improves data synchronization and security.
+
+Figure 2.3 shows the sequence of use case UC-D1, in this case, the data from LMS is handled by connector, passed to integration manager for normalization and published to event bus, then collected and distributed to course service. 
+
+UC-D1 Synchronize Data
+The data source system sends changes of course, registration and calendar data to the AIDAP
+
+
+
+
 
 Conclusion:
 In iteration 1, we are able to define the architecture style of the overall system, in which we decided that the combined design of layered architecture and microservice fits the most to address modularity, scalability, performance and maintainability. In iteration 2, we focus on layer-level architecture design, where we refine the handling of data from external systems using the combination of pub-sub and event-based architecture patterns to improve data synchronization and security.
