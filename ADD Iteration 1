@@ -1,1 +1,26 @@
-Include in this file the 7 steps for Iteration 1
+## Introduction:
+AIDAP is designed to modernize how academic institutions deliver and manage information. Students currently rely on multiple disconnected systems to access their academic data, which often leads to inefficiencies and fragmented communication. AIDAP addresses this by providing a unified interface that integrates institutional data sources and delivers context-aware responses through artificial intelligence.
+The platform supports multiple user groups, including students, who can query schedules and deadlines; lecturers, who can access course information; administrators, who can broadcast announcements and monitor institutional data; and maintainers, who can oversee system performance and updates. To achieve maximum efficiency, this report documents the design decisions made for AIDAP while following the Attribute-Driven Design methodology. In each iteration, architectural drivers are selected, refined using appropriate patterns and architectural elements, and justified through UML diagrams and quality attribute mapping.
+
+## Iteration 1 
+### 1.1 Review Inputs
+The inputs for Iteration 1 come from the architectural drivers of the system, which are the system's use cases, quality attributes, constraints, and architectural concerns gathered by the stakeholders. The use case indicates the expectation of the stakeholders on the system functionality, including academic queries, notifications, dashboard, analytics as well continuous updates and external data synchronization. Collectively these use cases demonstrate the need for real-time information, reliable data transfer, and smooth interaction with institutional systems.
+The quality attributes span a wide range, including performance, availability, security, scalability, reliability, usability, maintainability, and interoperability. Together, they define how the system must behave under load, how secure and resilient it must be, and how easily it should adapt to institutional needs and external data requirements. The constraints shape the solution by enforcing cloud deployment, the standardized REST/Graph QL communication as well as strict API permission limits, fast data synchronization, quick response times, as well as strong security. 
+The architectural concerns focus on protecting sensitive student information, ensuring system availability, maintaining consistent data synchronization across all connected systems, and guaranteeing that the AI assistant provides accurate and unbiased responses. Together, these drivers define the forces that guide the architectural decisions and determine the overarching goals of Iteration 1.
+
+### 1.2 Establish Iteration Goals
+In Iteration 1, the goal is to establish the high-level architecture of the AIDAP system. This iteration focuses on defining the overall structural foundation of the platform by selecting an appropriate reference architecture and identifying core architectural patterns that will shape system behavior. The intention is to decompose the system into major subsystems and outline their responsibilities so that future iterations can refine their internal designs.
+
+### 1.3 Refining elements
+Since AIDAP is a greenfield system, refinements are required for the entire system. Iteration 1 begins by decomposing it to subsystems with unique responsibility and functionality in order to define clear boundaries between modules.
+
+### 1.4 Select Architectural Patterns and Styles
+
+| Design Decision                         | Rationale                                                                                                                                                        |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Separate system into 4 layers           | Ensures clear separation of concerns, improves maintainability, and allows each subsystem (Presentation, Application, Data Access, Integration) to evolve independently. |
+| Apply microservice architecture         | Supports modularity, independent deployment, selective scaling, and fault isolation, aligning with performance, scalability, and maintainability requirements.      |
+| Using React.js for application modules  | Provides a fast, component-based UI framework that improves usability, modularity, and responsiveness across web and mobile interfaces.                             |
+| Using PostgreSQL for database           | Offers strong consistency, reliable transactions, and efficient querying for academic data, supporting system reliability and long-term scalability.                 |
+
+
