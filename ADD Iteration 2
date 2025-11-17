@@ -1,1 +1,31 @@
-Include in this file the 7 steps for Iteration 2
+## 2.1 Review : Analysis and Review (Ali)
+Iteration 1 established the high-level architecture of AIDAP by applying the first ADD iteration to define the system’s structural foundation using the architectural drivers, including the use cases, quality attributes, constraints, and architectural concerns. Iteration 1 decomposes the system into four layers, the Presentation Layer, Application Layer, Data Access Layer, and Integration Layer. For Iteration 2, we focus specifically on the layer-level design that supports the major functionality of the system.
+After reviewing these drivers, the relevant use cases for the layer-level features were identified as UC-S1, UC-S2, UC-S6, UC-D1, UC-D2, UC-D3, and UC-A1, all of which depend on retrieving external data, synchronizing information, performing failure recovery, or integrating institutional systems. The most important quality attributes influencing this subsystem are performance (QA-1, QA-6), reliability (QA-11, QA-16), maintainability of data synchronization processes (QA-14), and availability during failures (QA-18). These drivers are governed by constraints such as external API permission limits (CON-3), the requirement to use standardized REST or GraphQL interfaces (CON-5), fast synchronization expectations (CON-7), strict response-time requirements (CON-8), and secure data transfer (CON-9). The key architectural concerns include preventing data leakage (CRN-1), avoiding cross-user data exposure (CRN-3), maintaining API security and synchronization integrity (CRN-9), and ensuring correct responses from external data sources (CRN-10). These architectural drivers are candidates of refinement in the second iteration
+
+
+## 2.2 Establish Iteration Goal(Ali)
+
+CRN-9
+Ensuring data synchronization and API security between AIDAP and external university systems.
+
+In Iteration 2, the primary architectural concern addressed is CRN-9, which focuses on ensuring secure and reliable data synchronization between AIDAP and external university systems. Hence, this iteration focuses on changing the Integration Layer ,the subsystem responsible for managing all communication with external platforms. 
+This layer is important because AIDAP’s functionalities depend on accurate, secure, and efficient data exchange with systems such as LMS platforms, academic calendars, etc. So to meet these requirements the Integration layer would have to support data transfer, handle different types of APIs and manage failures or errors from external services. It should also allow the user to add or remove, or modify external systems without affecting the rest of the system. Therefore, Iteration 2 refines the Integration Layer’s internal structure, runtime behavior, communication patterns, and design mechanisms to ensure it operates as a robust and dependable gateway between AIDAP and institutional systems.
+
+## 2.3	 Refining Element
+As the Integration Layer was refined, design concepts were chosen specifically to satisfy the drivers identified for this subsystem as it is this layer that deals with different API’s data formats. Based on the drivers that was selected the design must have loose coupling, asynchronous processing, secure communication and easy extensibility
+Asynchronous event processing was selected to ensure that external API calls do not block system responsiveness. Loose coupling allows external systems to fail, change, or be replaced without impacting the core functionality of AIDAP, supporting the quality attributes of maintainability and reliability. Secure communication mechanisms, including token-based authentication, API key management, and encryption, ensure that data exchanged with external systems remains protected and accessible only to authorized components. Finally, centralized message routing and distribution enables reliable event delivery, retry logic, and synchronization integrity across the system.
+
+## 2.4	Choice of Architectural Design
+
+
+| Design Decision                                   | Rationale                                                                                                                                                 |
+|---------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Adopt a Pub-Sub Architecture                      | Enables AIDAP to handle external updates through loose coupling and asynchronous event handling, keeping the platform responsive even during frequent external changes. |
+| Use an Event-Driven Architecture for Integration  | Ensures AIDAP receives synchronized institutional data reliably and on time, supporting scalable interactions with LMS, calendar, and registration systems. |
+| Decouple External API Interactions from Core System Logic | Prevents failures or changes in external university APIs from disrupting core AIDAP services, improving overall system stability and maintainability.      |
+| Enforce Secure Communication Mechanisms           | Protects sensitive academic and user data through authentication tokens, API keys, and encrypted channels, aligning with institutional privacy requirements. |
+
+
+Conclusion:
+In iteration 1, we are able to define the architecture style of the overall system, in which we decided that the combined design of layered architecture and microservice fits the most to address modularity, scalability, performance and maintainability. In iteration 2, we focus on layer-level architecture design, where we refine the handling of data from external systems using the combination of pub-sub and event-based architecture patterns to improve data synchronization and security.
+
