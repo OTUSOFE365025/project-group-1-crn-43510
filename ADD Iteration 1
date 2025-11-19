@@ -115,6 +115,27 @@ Figure 1.4 shows the sequence of use cases UC-D2 in the system, where the admini
 UC-D2 API access
 The system query the data source systems using REST or GraphQL interface
 
+1.7: Perform Analysis of Current Design and Review Iteration Goal and Achievement of Design Purpose
+
+Not Addressed | Partially Addressed | Fully Addressed | Design Decisions Made during the Iteration 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              |                     |  UC-S1          | Select layared & microservice reference architecture to establish modules that support academic question
+              |                     |                 | processing 
+              |                     |  UC-S3          | Selected ref architecture establish Presentation -> Application -> Data Access pipeline that supports dashboard 
+              |                     |                 | generation
+              |                     |  UC-L1          | Architecture define integration layer and course manager necessary for lecture cuorse content updating
+     QA-1     |                     |                 | No relavent choices made yet about performance tuning. decompisition into microservices prepares sys for scaling 
+              |                     |                 | this scenario
+              |                     |  QA-6           | Mircoservices enable independant scaling for high traffic modules such as AI model & notification manager
+              |        QA-10        |                 | Auth's identified as concerns. Full mechanisms like encryption and token exchange will be defined in later
+              |                     |  QA-14          | Layared arch ensures maintainable sys by separating UI, services, integration, and data access
+              |        QA-16        |                 | PostgreSQL is chosen to keep consistency in academic data although detailed schema design will occur later
+              |                     |  CON-5          | Using REST / GraphQL interfaces across subsystem boundaries completely addresses this constraint
+              |        CON-9        |                 | Initial security service been defined although detailed SSO and encryption design deferred to later iterations
+              |    CRN-1 / CRN-3    |                 | partitioning user-specific modules and enforcement mechanisms to be completed
+
+
+
 
 
 
