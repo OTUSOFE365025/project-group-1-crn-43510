@@ -69,8 +69,25 @@ Figure 2.3 shows the sequence of use case UC-D1, in this case, the data from LMS
 UC-D1 Synchronize Data
 The data source system sends changes of course, registration and calendar data to the AIDAP
 
+2.7: 
 
+1.7: Perform Analysis of Current Design and Review Iteration Goal and Achievement of Design Purpose
 
+Not Addressed | Partially Addressed | Fully Addressed | Design Decisions Made during the Iteration 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              |                     |  UC-D1          | Use of pub-sub pattern & event-driven connections creates modules that allow syncrhonization  
+              |                     |  UC-D2          | Standard connector modules and manager for integration makes it flexible and secures access to external APIs
+              |                     |  UC-D3          | event-driven based architecture makes sure that remote data gets normalized, published and is distributed reliably
+              |        UC-S2        |                 | event capture is identified but scheduling logic to be defined in later iterations
+              |        UC-S1        |                 | Precise real-time data retrieval is supported by integration layer. AI routing handled in app layer
+              |        QA-1         |                 | Async event processing mitigate blocking and improves responsivesness. however, no performance tuning decisions
+              |                     |  QA-11          | Improved integration manager via adding error handling, retry logic as well as recovery mechanisms for failed external calls
+              |                     |  QA-18          | AIDAP availability persists during upstream outage through decoupling external systems
+              |                     |  QA-14          | The connector arch isolates external API variations which reduces costs during core system changes
+              |        CON-7        |                 | leverage of event-driven updates supporting quick sync but frequency policies still to be defined in later iterations
+              |        CON-8        |                 | whilst async integration improves performance, final optimizations have yet to be addressed
+              |                     |  CON-9          | enforcing token-based auth, API keys and encrypted channels through security module to ensure secure data transfer
+              |                     |  CON-9 (API)    | data hygiene processes like normalization, validation, and controlled routing lower risk of tampered/incorrect external data
 
 
 Conclusion:
