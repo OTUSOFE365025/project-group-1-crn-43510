@@ -1,3 +1,24 @@
+Introduction:
+This report focuses on the Iteration 3 of the Attribute Driven Design process, which goes over the system’s quality attribute scenarios. Within this iteration a key architectural driver is determined, and it is observed what elements of the system will be refined by what suitable design concepts. An updated deployment diagram, sequence diagrams, tables as well as a Kanban board is presented to demonstrate how the design decision in iteration 3 is reflected across the system’s architecture and development workflow.
+Iteration 3
+3.1 Review Inputs
+The analysis is now focusing on Iteration 3, after the completion of Iteration 1 and 2. In iteration 1 the architectural drivers like use cases, quality attributes,constraints as well as the architectural concerns highlighted the importance of real-time data access, secure synchronization and reliable updates. Whilst in iteration 2 the interaction layer was refined to ensure that communication between AIDAP and external university systems are secure, reliable and efficient. The selected design was publish-subscribe and event driven architecture so there can be loose coupling, asynchronous event handling and as it supports extensibility for evolving external API’s. In iteration 3 the AIDAP’s quality attributes will  be examined and reflected upon to check how well the design satisfied the identified architectural drivers
+
+3.2 Establish Iteration Goals
+QA-1
+Performance
+The system should quickly allow students to access or upload course materials, ensuring responses or uploads happen within a few seconds.
+
+QA -6
+Performance
+The AI model should understand diverse voices and accents and return accurate, natural-language answers within 2 seconds.
+
+QA-16
+Reliability
+The assistant should accurately interpret and respond to data retrieved from connected systems using NLP models, ensuring that the information is correct, consistent, and contextually appropriate for the user.
+
+For this iteration QA-1, QA-6 and QA-16 are chosen as the primary quality attribute to address. These quality attributes focus on the responsiveness of the manager modules and the accuracy, consistency and reliability of theAI assistant model. As the core component of the AIDAP, the correctness of the model is crucial to the overall performance of the system. Therefore, a more reliable and structured communication process between the presentation layer and the model will be defined in this iteration. In addition, manager modules also play an important role in reacting to user interactions, fetching data and providing services. The current design exposes these modules in low responsiveness due to repeated database access. Therefore, a mechanism to improve their responsiveness will be implemented for better performance.
+
 3.3 Refining elements
 In iteration 3, the focus is on the performance of system functionality. In order to do so, the inter-layer and inter-module communication shall be refined with architectural patterns or styles. 
 This includes data flow between manager modules, course manager, calendar manager, notification manager user manager and integration manager created in iteration 1. In addition, the process of passing a query to a data model for analysis shall also be refined in detail to improve its performance in terms of accuracy, since the model is the primary feature of the AIDAP system itself.
