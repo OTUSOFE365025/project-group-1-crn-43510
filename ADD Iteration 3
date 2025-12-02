@@ -1,1 +1,121 @@
-Include in this file the 7 steps for Iteration 3
+3.3 Refining elements
+In iteration 3, the focus is on the performance of system functionality. In order to do so, the inter-layer and inter-module communication shall be refined with architectural patterns or styles. 
+This includes data flow between manager modules, course manager, calendar manager, notification manager user manager and integration manager created in iteration 1. In addition, the process of passing a query to a data model for analysis shall also be refined in detail to improve its performance in terms of accuracy, since the model is the primary feature of the AIDAP system itself.
+
+3.4 Select Architectural Patterns and Styles
++---------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Design Decision                                               | Rationale                                                                                                                                |
++---------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Blackboard pattern - shared cache among manager modules       | Introduce a cache that enable memory sharing among components in application layer to improve loading speed                              |
++---------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+| Pipe and filter pattern                                       | Implement filters in the AI query process to preprocess inputs before feeding raw messages to the model to improve response accuracy     |
+|                                                               | and generation speed compared to raw inputs.                                                                                             |
++---------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
+
+3.7 Perform Analysis & Review Iteration
++--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Not Addressed      | Partially Addressed   | Completely Addressed   | Design Decisions Made During The Iteration                                                                                                                                                                       |
++--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                    | QA-6                  |                        | Pipe-and-filter pre-processor makes higher model input quality and reduces noise which enables faster and more accurate AI responses, but it also introduces latency in the preprocessing pipeline that could     |
+|                    |                       |                        | exceed the response time limit in case of filter misconfiguration                                                                                                                                                 |
++--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                    |                       | QA-16                  | Structured query stream makes for reliable data retrieval and consistent interpretations through standardized input and validation steps                                                                          |
++--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+|                    |                       | QA-1                   | Blackboard shared-cache pattern reduces repeated access to database which improves responsiveness of manager modules                                                                                              |
++--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+ATAM Analysis:
+In this iteration, the ATAM review is introduced to evaluate the adoption of the newly implemented design patterns, Blackboard shared-cache and Pipe-and-Filter preprocessing pipeline on addressing the selected quality attributes, QA-1, QA6 and QA16. The analysis will identify the sensitivity point, risk, non-risk and tradeoffs associated with the  decisions that are made in this iteration.
+
+Scenario 1:
+QA-1
+Attribute: Performance
+Environment: The system is in normal operation and under normal, connection to the external system is stable.
+Stimulus: A student user makes a request to access course material or dashboard data.
+Response: The manager module attempts to fetch data from the shared-cache if available. On a cache miss, the module fetches from the database, updates the cache and returns data to the UI.
+Risk:
+	R1: return outdated data or process failure on cache miss when connection to external system is disrupted
+	R2: increase memory usage and compete with other service 
+Non-risk:
+	N1: Frequently visited data are loaded significantly faster due to cache hits.
+	N2: Ease database connection and free bandwidth for other services’ connection to database on cache hit
+Sensitivity: 
+	S1: concern to the cache hit rate. Cache checking time becomes unnecessary if the cache hit rate is low.
+	S2: concern over the size of cache and the duration of data storing in the cache 
+Tradeoff
+	T1: performance(+) vs cost(-): more cache data improves cache hit rate but increases memory usage
+	T2: performance(+) vs data updateness(-): over rely on shared cache lead to presenting outdated data to user
+
+Reasoning: 
+Introducing a shared-cache among manager modules can improve the response rate of the modules for frequently accessed data and reduce the number of access to databases. However, it is challenging to maintain data consistency due to the cache size and synchronization rule.
+
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Scenario               | Student request course resource or dashboard data                                                                          |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Attribute(s)           | Performance QA-1                                                                                                           |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Environment            | System operating under normal load                                                                                         |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Stimulus               | A student user makes a request to access course resource or dashboard data                                                |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Response               | Manager modules check shared-cache; if cache hit, module fetch data from cache; if cache miss, module fetch data from      |
+|                        | database.                                                                                                                  |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+| Architectural Decision |                                                                                                                            |
+|                        | +------------------------+------------+-------------+-----------+----------+                                               |
+|                        | | Architectural Decision | Risk       | Sensitivity | Tradeoff  | Nonrisk  |                                               |
+|                        | +------------------------+------------+-------------+-----------+----------+                                               |
+|                        | | Active replication of  | R1,R2      | S1,S2       | T1,T2     | N1,N2    |                                               |
+|                        | | TimeServerConnector    |            |             |           |          |                                               |
+|                        | +------------------------+------------+-------------+-----------+----------+                                               |
++------------------------+----------------------------------------------------------------------------------------------------------------------------+
+
+Scenario 2:
+QA-16, QA-6
+Attribute: Reliability
+Environment: the AI assistant model is functioning normally and the preprocessing pipeline is operating under normal load.
+Stimulus: A student user made a query with noisy and unstructured natural language 
+Response: the preprocessing pipeline filters the noise from the query, normalizes the message, identifies the intention and feeds the result to the model.
+Risk:
+	R1: Bias or errors in the filter may propagate incorrect data or distort the intention of the user to the model
+	R2: Excessive or misconfigured preprocessing step may introduce latency and exceeds the benefits of minimizing the generation time of the model
+
+Non-risk:
+	N1: Filters improves the clarity of user query message and result in more accurate response from the model
+	N2: Preprocess ease the load of GPU of the model by lower the complexity of the query message
+
+Sensitivity:
+	S1: the number of filter in the pipeline is correlated to the latency introduced to the process
+	S2: concern over the level of complexity of each layer of filters affecting the accuracy of the model
+
+Tradeoff: 
+	T1: Accuracy(+) vs Latency(-): more preprocessing filter lead can improve the clarity of message and the efficiency of generating response, contributing to faster response generation. However, excessive filtering in the pipeline might introduce latency and therefore exceed the benefit of reducing model generation time.
+	T2: Accuracy(+) vs Intention Fidelity(-) more complex filter reduces noises but may remove critical context from the message
+
+Reasoning:
+Implementing the pipe and filter pattern on preprocessing query messages before feeding to the assistant model can lead to a more efficient generating process and more accurate response. However, if the filtering process is not optimized for the system or is overcomplicated, the time spent on filter messages, even for simple, structured query may end up be longer than the time of the model interpreting raw query message.
+
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Scenario               | Student sends a query message with noise                                                                                         |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Attribute(s)           | Reliability QA-16, Performance QA-6                                                                                              |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Environment            | Processing pipeline and AI model operating under normal load                                                                     |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Stimulus               | A student user inputs a noisy and ambiguous query                                                                                |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Response               | The preprocessing pipeline normalizes the message, identify the intention and feed the model a structuralized version of the     |
+|                        | query                                                                                                                            |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+| Architectural Decision |                                                                                                                                  |
+|                        | +------------------------+------------+-------------+-----------+----------+                                                     |
+|                        | | Architectural Decision | Risk       | Sensitivity | Tradeoff  | Nonrisk  |                                                     |
+|                        | +------------------------+------------+-------------+-----------+----------+                                                     |
+|                        | | Active replication of  | R1,R2      | S1,S2       | T1,T2     | N1,N2    |                                                     |
+|                        | | TimeServerConnector    |            |             |           |          |                                                     |
+|                        | +------------------------+------------+-------------+-----------+----------+                                                     |
++------------------------+----------------------------------------------------------------------------------------------------------------------------------+
+
+Utility Tree:
+Utiltiy tree graph is in the iteration 3 graphs directory
+
