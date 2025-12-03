@@ -49,6 +49,13 @@ This includes data flow between manager modules, course manager, calendar manage
 +---------------------------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------+
 
 3.6
+Figure 1.1 - Module View: Shows the layered architectural design with presentation, application, integration and data access layers to separate functionality and introduces the shared cache and filter pipeline in the application layer
+
+Figure 1.2 - Deployment View: Shows deployment of a system where user access server features through API controller module and the cluster of microservices has direct access to the shared cache that access database on cache misses. 
+
+Figure 1.3 - Sequence diagram A: Shared Cache data retrieval demonstrates how the shared cache works in the AIDAP system. When a manager module such as course manager makes request it attempts to retrieve from shared cache and on hits the data is immediate returned to manager improving response time and on ache miss the manager requests data from external system (LMS) then updates shared cache to make future calls more efficient
+
+1.4 - Sequence diagram B: shows what happens when a student sends queries through the application interface and the API controller forwards to the filter pipeline which filters noise, normalizes query text and extracts intent. The cleaned query is then passed to the AI model for analysis
 
 3.7 Perform Analysis & Review Iteration
 +--------------------+-----------------------+------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
