@@ -1,1 +1,141 @@
-Include in this file the 7 steps for Iteration 1
+## Introduction:
+AIDAP is designed to modernize how academic institutions deliver and manage information. Students currently rely on multiple disconnected systems to access their academic data, which often leads to inefficiencies and fragmented communication. AIDAP addresses this by providing a unified interface that integrates institutional data sources and delivers context-aware responses through artificial intelligence.
+The platform supports multiple user groups, including students, who can query schedules and deadlines; lecturers, who can access course information; administrators, who can broadcast announcements and monitor institutional data; and maintainers, who can oversee system performance and updates. To achieve maximum efficiency, this report documents the design decisions made for AIDAP while following the Attribute-Driven Design methodology. In each iteration, architectural drivers are selected, refined using appropriate patterns and architectural elements, and justified through UML diagrams and quality attribute mapping.
+
+## Iteration 1 
+### 1.1 Review Inputs
+The inputs for Iteration 1 come from the architectural drivers of the system, which are the system's use cases, quality attributes, constraints, and architectural concerns gathered by the stakeholders. The use case indicates the expectation of the stakeholders on the system functionality, including academic queries, notifications, dashboard, analytics as well continuous updates and external data synchronization. Collectively these use cases demonstrate the need for real-time information, reliable data transfer, and smooth interaction with institutional systems.
+The quality attributes span a wide range, including performance, availability, security, scalability, reliability, usability, maintainability, and interoperability. Together, they define how the system must behave under load, how secure and resilient it must be, and how easily it should adapt to institutional needs and external data requirements. The constraints shape the solution by enforcing cloud deployment, the standardized REST/Graph QL communication as well as strict API permission limits, fast data synchronization, quick response times, as well as strong security. 
+The architectural concerns focus on protecting sensitive student information, ensuring system availability, maintaining consistent data synchronization across all connected systems, and guaranteeing that the AI assistant provides accurate and unbiased responses. Together, these drivers define the forces that guide the architectural decisions and determine the overarching goals of Iteration 1.
+
+### 1.2 Establish Iteration Goals
+In Iteration 1, the goal is to establish the high-level architecture of the AIDAP system. This iteration focuses on defining the overall structural foundation of the platform by selecting an appropriate reference architecture and identifying core architectural patterns that will shape system behavior. The intention is to decompose the system into major subsystems and outline their responsibilities so that future iterations can refine their internal designs.
+
+### 1.3 Refining elements
+Since AIDAP is a greenfield system, refinements are required for the entire system. Iteration 1 begins by decomposing it to subsystems with unique responsibility and functionality in order to define clear boundaries between modules.
+
+### 1.4 Select Architectural Patterns and Styles
+
+| Design Decision                         | Rationale                                                                                                                                                        |
+|-----------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Separate system into 4 layers           | Ensures clear separation of concerns, improves maintainability, and allows each subsystem (Presentation, Application, Data Access, Integration) to evolve independently. |
+| Apply microservice architecture         | Supports modularity, independent deployment, selective scaling, and fault isolation, aligning with performance, scalability, and maintainability requirements.      |
+| Using React.js for application modules  | Provides a fast, component-based UI framework that improves usability, modularity, and responsiveness across web and mobile interfaces.                             |
+| Using PostgreSQL for database           | Offers strong consistency, reliable transactions, and efficient querying for academic data, supporting system reliability and long-term scalability.                 |
+
+### 1.5 Instantiate Architectural Elements
+Major Component of the Architecture :
+
+Presentation Layer:
+Component                          | Responsibility
+---------------------------------------------------------------------------------------------------------------
+Web Application Interface          | Handles users’ interaction with the system’s features on web application
+Mobile Application Interface       | Handles users’ interaction with the system’s feature on mobile application
+Voice Assistant Handler            | Handle users’ interaction through voice assistant feature
+
+
+Application Layer:
+Component                          | Responsibility
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+API Controller                     | Handle user request and redirect them to corresponding service module
+User Manager                       | Assign role to user(Student, Lecturer, TA, Administration) and their corresponding accessibility
+Course Manager                     | Manage the flow of course related resources and data
+Calendar Manager                   | Manage the changes and request of user’s calendar data
+Notification Manager               | Manage user’s defined notification
+Message Manager                    | Manage all form of system message
+AI Model                           | The intelligent core of the platform; interpret query in natural language and generate response and provide analyze to course data
+Integration Manager                | Manage the API communication and implementation of the system with other external system
+Security Service                   | Manage the login of the system: handle unauthorized access attempt and encrypt password and sensitive information
+System Log Manager                 | Stores operational data for assessment
+
+
+Data Access Layer:
+
+Component                          | Responsibility
+---------------------------------------------------------------------------------------------------
+Data handler                       | Query data from database
+Cache Manager                      | Stores recent or frequent responses to cache for faster access
+
+
+Domain Specific Component :
+The following components are the architectural elements that represent the business logic of the system that model the problem domain and are unique to AIDAP: 
+
+Component                          | Responsibility
+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Course Manager                     | Manage the flow of course related resources and data
+User Manager                       | Manage the data of all type of user and any updates that relates to them
+Calendar Manager                   | Manage the changes and request of user’s calendar data
+Notification Manager               | Manage user’s defined notification
+Message Manager                    | Manage all form of message(system and course announcement
+AI Model                           | The intelligent core of the platform; interpret query in natural language and generate response and provide analyze to course data
+Integration Manager                | Manage the API communication and implementation of the system with other external system
+
+
+Interface Specification :
+
+External Interfaces(how system with external system and user)
+External Interfaces
+
+Component                                  | Type                         | Description
+------------------------------------------------------------------------------------------------------------------------------------------------------
+Web client interface                       | REST/ HTTP                   | Send user requests from web application UI to API controller
+Mobile application client                  | REST/HTTP                    | Send user requests from mobile application UI to API controller
+Voice assistant interface                  | Audio/REST                   | Receive audio and from user and send request to API controller
+LMS                                        | REST                         | Retrieve course related data(course material, instructor, assignments…)
+Registration                               | REST                         | Retrieves student enrollment data
+Calendar                                   | REST                         | Export user events
+Mail                                       | REST                         | Retrieve users’ mail 
+SSO                                        | OAuth2                       | Login Authentication
+
+
+Internal Interfaces
+
+Component                                  | Interface
+---------------------------------------------------------------------------------------------------------------
+API Controller                             | REST endpoints for user interface requests
+Course Manager                             | Course information service
+Notification Manager                       | Create notification 
+Calendar Manager                           | Create event
+User manager                               | Create new user, change user’s information(email, phone number)
+AI model                                   | Process user query in natural language
+Data Handler                               | DBMS query interface
+
+1.6: Module View, Deployment View and Sequences
+Figure 1.1 shows the layered architectural design of the AIDAP system with the Presentation Layer, Application Layer, Integration Layer and Data Access Layer to separate the functionality of the system to improve modularity and separation of concerns.
+
+Figure 1.2 shows the initial deployment of the system where user devices access the application server’s features through the API Controller module, while the microservice cluster has direct access to the database, and access to external systems with integration manager.
+
+Figure 1.3 shows the sequence of events in the system when a student asks the AIDAP assistant about their schedule(UC-S1). The application interface passes the query to the API controller, and eventually reaches the AI model. The model then fetches the data of the student schedule from the course manager, analyzes it, and returns its response to the application interface.
+
+UC-S1 Ask Academic Question
+Student ask system about their courses information, schedule, deadlines and grades
+
+Figure 1.4 shows the sequence of use cases UC-D2 in the system, where the administration asks the system about a student’s enrollment status through a mobile application interface. The AI model then requests the User Manager for the student enrollment status. The user manager gets the enrollment status from the Registration system through integration manager, then returns the data back to the AI model for analysis, generates response and returns to the presentation layer.
+
+UC-D2 API access
+The system query the data source systems using REST or GraphQL interface
+
+1.7: Perform Analysis of Current Design and Review Iteration Goal and Achievement of Design Purpose
+
+Not Addressed | Partially Addressed | Fully Addressed | Design Decisions Made during the Iteration 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+              |                     |  UC-S1          | Select layared & microservice reference architecture to establish modules that support academic question
+              |                     |                 | processing 
+              |                     |  UC-S3          | Selected ref architecture establish Presentation -> Application -> Data Access pipeline that supports dashboard 
+              |                     |                 | generation
+              |                     |  UC-L1          | Architecture define integration layer and course manager necessary for lecture cuorse content updating
+     QA-1     |                     |                 | No relavent choices made yet about performance tuning. decompisition into microservices prepares sys for scaling 
+              |                     |                 | this scenario
+              |                     |  QA-6           | Mircoservices enable independant scaling for high traffic modules such as AI model & notification manager
+              |        QA-10        |                 | Auth's identified as concerns. Full mechanisms like encryption and token exchange will be defined in later
+              |                     |  QA-14          | Layared arch ensures maintainable sys by separating UI, services, integration, and data access
+              |        QA-16        |                 | PostgreSQL is chosen to keep consistency in academic data although detailed schema design will occur later
+              |                     |  CON-5          | Using REST / GraphQL interfaces across subsystem boundaries completely addresses this constraint
+              |        CON-9        |                 | Initial security service been defined although detailed SSO and encryption design deferred to later iterations
+              |    CRN-1 / CRN-3    |                 | partitioning user-specific modules and enforcement mechanisms to be completed
+
+
+
+
+
+
